@@ -10,7 +10,13 @@ import {useAuthState} from 'react-firebase-hooks/auth';
 import {useCollectionData} from 'react-firebase-hooks/firestore';
 
 firebase.initializeApp({
-
+  apiKey: "AIzaSyDh_tb-SCMagY5SwCKijepNaSqFtET0jYk",
+  authDomain: "chat-display-d0af1.firebaseapp.com",
+  projectId: "chat-display-d0af1",
+  storageBucket: "chat-display-d0af1.appspot.com",
+  messagingSenderId: "715495394300",
+  appId: "1:715495394300:web:4f3f7a5c4795a86f2fc079",
+  measurementId: "G-GLRSQ65T7L"
 
 })
 
@@ -19,13 +25,61 @@ const firestore = firebase.firestore();
 
 
 function App() {
+
+  const [user] = useAuthState(auth);
+
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="chat-display">
+
 
       </header>
+
+      <section>
+        {user ? <ChatRoom/> : <SignIn/> }
+      </section>
     </div>
   );
+}
+
+
+function SignIn(){
+  const signInwithGoogle = () =>{
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider);
+  }
+
+  return(
+    <button onClick={signInwithGoogle}>Sign in with Google</button>
+  )
+}
+
+function SignOut(){
+  return auth.currentUser && (
+    <button onClick={() => auth.signOut()}>Sign Out</button>
+  )
+}
+
+function ChatRoom(){
+  const messageRef = firestore.collection('messages');
+  const query = messagesRef.orderBy('createdAt').limit(25);
+
+  const [messages] = useCollectionData(query, {idField: 'id'});
+
+  return(
+    <> 
+    <div>
+      {messages && messages.map(msg => <ChatMessage key={msg.id} message={msg}/>)}
+    </div>
+    </>
+  )
+}
+
+function ChatMessage(props){
+  const {text, uid} = props.message;
+
+
+  return <p>{text}</p>
 }
 
 export default App;
