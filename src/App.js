@@ -76,10 +76,17 @@ function ChatRoom(){
 }
 
 function ChatMessage(props){
-  const {text, uid} = props.message;
+  const {text, uid, photoURL} = props.message;
 
 
-  return <p>{text}</p>
+  const messageClass = uid === auth.currentUser.uid ? 'sent' : 'received';
+
+  return (
+    <div className={`message ${messageClass}`}>
+      <img src={photoURL}/>
+      <p>{text}</p>
+    </div>
+  )
 }
 
 export default App;
